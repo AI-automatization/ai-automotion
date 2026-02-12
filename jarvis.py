@@ -5,24 +5,6 @@
 ║     JARVIS v3  —  O'zbek Ovozli Yordamchi                           ║
 ║     Windows Voice Assistant  —  Full Edition                         ║
 ╚══════════════════════════════════════════════════════════════════════╝
-Yangiliklar v3:
-  ✅ Xotira tizimi (memory.json)
-  ✅ Kundalik va Vazifalar (To-Do)
-  ✅ Eslatmalar (threading.Timer + Toast)
-  ✅ Spotify integratsiya
-  ✅ Media tugmalar (play/pause/next/prev)
-  ✅ Oyna boshqaruvi (minimize/maximize/close)
-  ✅ Clipboard boshqaruvi
-  ✅ Fayl boshqaruvi
-  ✅ Jarayonlar (psutil)
-  ✅ Valyuta kurslari
-  ✅ Yangiliklar (RSS)
-  ✅ Tarjima (deep-translator)
-  ✅ Dashboard: CPU/RAM/Batareya (HUD da)
-  ✅ Loglash (logs/ papkasiga)
-  ✅ Buyruqlar tarixi
-  ✅ Sozlamalar oynasi (tkinter)
-  ✅ .env xavfsizlik
 """
 
 import os, sys, json, time, asyncio, subprocess, webbrowser
@@ -99,8 +81,7 @@ if PA_OK:
     import pyautogui
     pyautogui.FAILSAFE = False
 
-# ── Yangi modullar ────────────────────────────────────────────────────
-import sys
+# ── Modullar ──────────────────────────────────────────────────────────
 sys.path.insert(0, os.path.dirname(__file__))
 
 from modules.logger        import logger
@@ -114,8 +95,6 @@ from modules.reminders import (
     parse_duration, parse_reminder_message, format_time_left
 )
 from modules.media_control import (
-    init_spotify, spotify_search_play, spotify_pause, spotify_resume,
-    spotify_next, spotify_prev, spotify_current, spotify_volume,
     media_play_pause, media_next, media_prev, media_stop,
     minimize_window, maximize_window, close_window, restore_window,
     list_open_windows, minimize_all_windows,
@@ -140,7 +119,6 @@ from config import (
     CLAUDE_API_KEY, WEATHER_API_KEY, CITY_NAME,
     APPS, WAKE_WORD, LISTEN_LANG, EDGE_VOICE,
     AI_SYSTEM_PROMPT,
-    SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET,
 )
 
 
@@ -149,8 +127,8 @@ from config import (
 # ══════════════════════════════════════════════════════════════════════
 jarvis_state     = "idle"
 anim_window      = None
-command_history  = []          # [(vaqt, buyruq, javob), ...]
-_speech_queue    = queue.Queue()   # Thread-safe ovoz navbati
+command_history  = []
+_speech_queue    = queue.Queue()
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -175,7 +153,7 @@ def set_state(state: str):
 
 
 # ══════════════════════════════════════════════════════════════════════
-#  TTS  —  Thread-xavfsiz speak
+#  TTS
 # ══════════════════════════════════════════════════════════════════════
 async def _tts_async(text: str, voice: str, tmp_path: str):
     communicate = edge_tts.Communicate(text, voice)
@@ -183,7 +161,6 @@ async def _tts_async(text: str, voice: str, tmp_path: str):
 
 
 def _speak_worker():
-    """Alohida threadda ovozli javoblarni navbat bilan chiqaradi"""
     while True:
         text = _speech_queue.get()
         if text is None:
@@ -219,17 +196,15 @@ def _do_speak(text: str):
 
 
 def speak(text: str):
-    """Asosiy speak funksiyasi — navbatga qo'shadi"""
     _speech_queue.put(text)
 
 
-# Speak worker ni threadda ishga tushirish
 _speak_thread = threading.Thread(target=_speak_worker, daemon=True)
 _speak_thread.start()
 
 
 # ══════════════════════════════════════════════════════════════════════
-#  STT  —  Ovozni matnga
+#  STT
 # ══════════════════════════════════════════════════════════════════════
 if SR_OK and sr:
     recognizer = sr.Recognizer()
@@ -279,7 +254,7 @@ def listen_wake_word():
 
 
 # ══════════════════════════════════════════════════════════════════════
-#  ANIMATSIYA  —  Cyberpunk HUD (CPU/RAM ko'rsatgich bilan)
+#  ANIMATSIYA
 # ══════════════════════════════════════════════════════════════════════
 class JarvisAnimation:
     W, H   = 240, 310
@@ -313,15 +288,14 @@ class JarvisAnimation:
         self._drag_x = self._drag_y = 0
         self.cv.bind("<ButtonPress-1>", self._drag_start)
         self.cv.bind("<B1-Motion>",     self._drag_move)
-        # Sağ klik — kontekst menyu
         self.cv.bind("<Button-3>",      self._show_menu)
 
         self._cur_color  = self.STATE_CFG["idle"]["color"]
         self._particles  = []
         self._frame      = 0
         self._running    = True
-        self._stats      = {}          # CPU/RAM ma'lumotlari
-        self._stats_tick = 0           # Har 30 frame yangilash
+        self._stats      = {}
+        self._stats_tick = 0
 
         self._menu = tk.Menu(self.root, tearoff=0,
                              bg="#0a1628", fg="#00aaff",
@@ -395,11 +369,8 @@ class JarvisAnimation:
         c = self._cur_color
         pad = 8
 
-        # Fon
         cv.create_rectangle(pad, pad, W-pad, H-pad,
                              fill=self.PANEL, outline=self.BORDER, width=1)
-
-        # Sarlavha
         cv.create_rectangle(pad, pad, W-pad, pad+28,
                              fill="#07111f", outline="", width=0)
         cv.create_text(W//2, pad+14, text="J · A · R · V · I · S",
@@ -411,10 +382,8 @@ class JarvisAnimation:
         cv.create_line(pad+4, pad+29, W-pad-4, pad+29,
                        fill=self._dim(c, 0.25), width=1)
 
-        # Orb markazi
         cx, cy_orb = W//2, 110
 
-        # Glow
         for gs, ga in zip([52, 42, 34], [0.06, 0.10, 0.16]):
             gc = self._dim(c, ga * (1.5 if state != "idle" else 0.5))
             cv.create_oval(cx-gs, cy_orb-gs, cx+gs, cy_orb+gs,
@@ -496,7 +465,6 @@ class JarvisAnimation:
                                      bx+bar_w, cy_orb-int(h)//2+2,
                                      fill="white", outline="")
 
-        # Particlelar
         if state != "idle":
             for p in self._particles:
                 p["angle"] += p["speed"]*0.02
@@ -507,9 +475,8 @@ class JarvisAnimation:
                 cv.create_oval(px-ps, py-ps, px+ps, py+ps,
                                fill=self._dim(c, 0.55*dim_f), outline="")
 
-        # ── CPU / RAM / Batareya paneli ──────────────────────────────
         self._stats_tick += 1
-        if self._stats_tick >= 60:   # Har 2 soniyada yangilash
+        if self._stats_tick >= 60:
             self._stats_tick = 0
             try:
                 self._stats = fm_get_stats()
@@ -521,7 +488,6 @@ class JarvisAnimation:
                        fill=self._dim(c, 0.20), width=1)
 
         if self._stats:
-            bar_h = 5
             bar_bg = "#0d2444"
 
             def draw_bar(label_txt, value, y_pos, bar_color):
@@ -556,7 +522,6 @@ class JarvisAnimation:
                                fill=bat_color, anchor="w")
             stats_y += 44
 
-        # Quyi holat satri
         y_bottom = H - pad - 28
         cv.create_line(pad+4, y_bottom, W-pad-4, y_bottom,
                        fill=self._dim(c, 0.20), width=1)
@@ -567,7 +532,6 @@ class JarvisAnimation:
                        font=("Courier", 8, "bold"),
                        fill=self._dim(c, 0.85*dim_f))
 
-        # Chegara glow
         glow_a = 0.18 + 0.08*math.sin(t*2)
         cv.create_rectangle(pad, pad, W-pad, H-pad,
                              fill="", outline=self._dim(c, glow_a), width=2)
@@ -622,15 +586,12 @@ def open_settings_window(parent=None):
     nb = ttk.Notebook(win)
     nb.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # ── API Kalitlar tab ──────────────────────────────────────────────
     tab_api = ttk.Frame(nb)
     nb.add(tab_api, text="🔑 API Kalitlar")
 
     fields_api = [
-        ("Claude API Key:",      "CLAUDE_API_KEY"),
-        ("Weather API Key:",     "WEATHER_API_KEY"),
-        ("Spotify Client ID:",   "SPOTIFY_CLIENT_ID"),
-        ("Spotify Client Sec:",  "SPOTIFY_CLIENT_SECRET"),
+        ("Claude API Key:",  "CLAUDE_API_KEY"),
+        ("Weather API Key:", "WEATHER_API_KEY"),
     ]
     entries_api = {}
     for i, (label, key) in enumerate(fields_api):
@@ -658,7 +619,6 @@ def open_settings_window(parent=None):
     ttk.Button(tab_api, text="💾 Saqlash", command=save_api).grid(
         row=len(fields_api), column=1, sticky="e", padx=8, pady=12)
 
-    # ── Xotira tab ───────────────────────────────────────────────────
     tab_mem = ttk.Frame(nb)
     nb.add(tab_mem, text="🧠 Xotira")
 
@@ -684,7 +644,6 @@ def open_settings_window(parent=None):
     ttk.Button(tab_mem, text="🔄 Yangilash",
                command=load_memory_view).pack(pady=4)
 
-    # ── Vazifalar tab ────────────────────────────────────────────────
     tab_tasks = ttk.Frame(nb)
     nb.add(tab_tasks, text="📌 Vazifalar")
 
@@ -756,7 +715,7 @@ def control_computer(cmd: str) -> bool:
         subprocess.run("shutdown /s /t 0", shell=True); return True
 
     if any(w in cmd for w in [
-        "kompyuterni o'chir", "o'chir", "shutdown",
+        "kompyuterni o'chir", "shutdown",
         "kompyuter o'chir", "yopib qo'y kompyuterni"
     ]):
         speak("Kompyuter 30 soniyada o'chadi")
@@ -796,7 +755,6 @@ def open_app(cmd: str) -> bool:
                 if path.startswith("ms-"):
                     os.startfile(path)
                 else:
-                    # Glob bilan wildcard hal qilish
                     if "*" in path:
                         matches = glob.glob(path)
                         if matches:
@@ -987,10 +945,9 @@ def ask_ai(question: str) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════
-#  BUYRUQLARNI QAYTA ISHLASH  —  asosiy router
+#  BUYRUQLARNI QAYTA ISHLASH
 # ══════════════════════════════════════════════════════════════════════
 def _record(cmd: str, resp: str):
-    """Tarixi va logga yozish"""
     ts = datetime.datetime.now().strftime("%H:%M:%S")
     command_history.append((ts, cmd, resp))
     if len(command_history) > 200:
@@ -1004,10 +961,10 @@ def process_command(cmd: str) -> bool:
     cmd = cmd.strip()
 
     # ── Chiqish ──────────────────────────────────────────────────────
-    EXIT_WORDS = ["xayr", "yopil", "yop", "chiq", "ketdim", "off",
+    EXIT_WORDS = ["Xayr Poshel Naxuy", "yopil", "yop", "chiq", "ketdim", "off",
                   "stop jarvis", "jarvis yopil", "dasturni yop", "quit"]
     if any(w in cmd for w in EXIT_WORDS):
-        speak("Xayr! Ko'rishguncha.")
+        speak("Xayr Poshel Naxuy! Ko'rishguncha.")
         return False
 
     # ── Toxta ────────────────────────────────────────────────────────
@@ -1016,7 +973,6 @@ def process_command(cmd: str) -> bool:
         if PG_OK:
             try: pygame.mixer.music.stop()
             except Exception: pass
-        # Navbatni tozalash
         while not _speech_queue.empty():
             try: _speech_queue.get_nowait()
             except Exception: pass
@@ -1024,6 +980,10 @@ def process_command(cmd: str) -> bool:
         play_beep(660, 100)
         _record(cmd, "[to'xtatildi]")
         return True
+
+    # ── Ovoz — OLDIN tekshirish (shutdown bilan konflikt oldini olish) ──
+    if "ovoz" in cmd and control_volume(cmd):
+        _record(cmd, "ovoz"); return True
 
     # ── Kompyuter boshqaruvi ─────────────────────────────────────────
     if control_computer(cmd):
@@ -1053,10 +1013,6 @@ def process_command(cmd: str) -> bool:
         resp   = get_weather(city); speak(resp)
         _record(cmd, resp); return True
 
-    # ── Ovoz ─────────────────────────────────────────────────────────
-    if "ovoz" in cmd and control_volume(cmd):
-        _record(cmd, "ovoz"); return True
-
     # ── Tizim statistikasi ───────────────────────────────────────────
     STATS_WORDS = ["cpu", "ram", "batareya", "xotira", "disk",
                    "tizim holati", "kompyuter holati"]
@@ -1084,9 +1040,9 @@ def process_command(cmd: str) -> bool:
 
     # ── Yangiliklar ──────────────────────────────────────────────────
     if any(w in cmd for w in ["yangilik", "xabar", "news"]):
-        topic = None
+        cmd_c = cmd
         for kw in ["yangilik", "xabar", "news", "haqida", "bo'yicha"]:
-            cmd_c = cmd.replace(kw, "").strip()
+            cmd_c = cmd_c.replace(kw, "").strip()
         topic = cmd_c if len(cmd_c) > 3 else None
         resp  = get_news_rss(topic); speak(resp)
         _record(cmd, resp); return True
@@ -1121,7 +1077,6 @@ def process_command(cmd: str) -> bool:
     JOURNAL_WORDS = ["kundalikka", "kundalik yoz", "journal",
                      "bugun nima qild", "yozib qo'y"]
     if any(w in cmd for w in JOURNAL_WORDS):
-        # Matnni ajratish
         text = cmd
         for kw in ["kundalikka", "kundalik", "yoz", "qo'y", "journal"]:
             text = text.replace(kw, "")
@@ -1179,7 +1134,6 @@ def process_command(cmd: str) -> bool:
 
     # ── Xotira ───────────────────────────────────────────────────────
     if any(w in cmd for w in ["eslab qol", "xotirla", "yodlab qol"]):
-        # "mening ismim Ali, eslab qol" → save_memory("ism", "Ali")
         kv_m = re.search(r'(mening\s+)?(.+?)\s+(?:eslab|yodlab|xotirla)', cmd)
         if kv_m:
             raw   = kv_m.group(2).strip()
@@ -1202,36 +1156,12 @@ def process_command(cmd: str) -> bool:
             resp = "Xotiramda hech narsa yo'q"
         speak(resp); _record(cmd, resp); return True
 
-    # ── Spotify ──────────────────────────────────────────────────────
-    SPOTIFY_WORDS = ["spotify", "spotifiy"]
-    if any(w in cmd for w in SPOTIFY_WORDS):
-        if any(w in cmd for w in ["qo'y", "qoy", "ijro", "play"]):
-            q = cmd
-            for kw in SPOTIFY_WORDS + ["qo'y", "qoy", "da", "ni"]:
-                q = q.replace(kw, "")
-            q = q.strip()
-            if q:
-                resp = spotify_search_play(q)
-            else:
-                resp = spotify_resume()
-        elif any(w in cmd for w in ["toxta", "pauza", "pause"]):
-            resp = spotify_pause()
-        elif any(w in cmd for w in ["keyingi", "next"]):
-            resp = spotify_next()
-        elif any(w in cmd for w in ["oldingi", "prev"]):
-            resp = spotify_prev()
-        elif any(w in cmd for w in ["nima ijro", "qaysi qo'shiq", "hozir nima"]):
-            resp = spotify_current()
-        else:
-            resp = spotify_current()
-        speak(resp); _record(cmd, resp); return True
-
     # ── Media tugmalar ───────────────────────────────────────────────
     MEDIA_WORDS = {
         "keyingi qo'shiq": media_next,
         "oldingi qo'shiq": media_prev,
-        "musiqani pauza": media_play_pause,
-        "musiqani davom": media_play_pause,
+        "musiqani pauza":  media_play_pause,
+        "musiqani davom":  media_play_pause,
         "musiqani to'xtat": media_stop,
     }
     for phrase, fn in MEDIA_WORDS.items():
@@ -1251,9 +1181,8 @@ def process_command(cmd: str) -> bool:
             if op == "minimize_all":
                 resp = minimize_all_windows()
             else:
-                # Oyna nomini topish
                 win_name = re.sub(
-                    r'\b(minimlashtir|to\'liq ekran|maksimum|oynani yop|barcha)\b',
+                    r"\b(minimlashtir|to'liq ekran|maksimum|oynani yop|barcha)\b",
                     '', cmd).strip()
                 if not win_name:
                     win_name = "Chrome"
@@ -1266,20 +1195,14 @@ def process_command(cmd: str) -> bool:
     # ── Clipboard ────────────────────────────────────────────────────
     if any(w in cmd for w in ["clipboard", "nusxalangan", "nusxa olindi"]):
         text = get_clipboard()
-        if text:
-            resp = f"Clipboardda: {text[:80]}"
-        else:
-            resp = "Clipboard bo'sh"
+        resp = f"Clipboardda: {text[:80]}" if text else "Clipboard bo'sh"
         speak(resp); _record(cmd, resp); return True
 
     # ── Fayl boshqaruvi ──────────────────────────────────────────────
     FILE_OPEN_WORDS = ["papkani och", "papka och", "ochib ko'rsat"]
     if any(w in cmd for w in FILE_OPEN_WORDS):
         folder = parse_folder_from_cmd(cmd)
-        if folder:
-            resp = open_folder(folder)
-        else:
-            resp = open_folder(DESKTOP)
+        resp = open_folder(folder if folder else DESKTOP)
         speak(resp); _record(cmd, resp); return True
 
     if any(w in cmd for w in ["oxirgi fayl", "so'nggi fayl", "yuklanganlar"]):
@@ -1293,15 +1216,11 @@ def process_command(cmd: str) -> bool:
 
     KILL_WORDS = ["ni to'xtat", "ni o'ldir", "ni yop"]
     if any(w in cmd for w in KILL_WORDS):
-        # "chrome ni to'xtat" → "chrome"
         app = cmd
         for kw in KILL_WORDS + ["ni"]:
             app = app.replace(kw, "")
         app = app.strip()
-        if app:
-            resp = kill_process(app)
-        else:
-            resp = "Qaysi dasturni to'xtatish kerak?"
+        resp = kill_process(app) if app else "Qaysi dasturni to'xtatish kerak?"
         speak(resp); _record(cmd, resp); return True
 
     # ── Sozlamalar oynasi ────────────────────────────────────────────
@@ -1382,18 +1301,10 @@ def process_command(cmd: str) -> bool:
 
 
 # ══════════════════════════════════════════════════════════════════════
-#  ASOSIY TSIKL
+#  ASOSIY TSIKL  ← BU YERDA TUZATILDI
 # ══════════════════════════════════════════════════════════════════════
 def main_loop():
-    # Spotify ni ishga tushirish
-    if (SPOTIFY_CLIENT_ID and
-            not SPOTIFY_CLIENT_ID.startswith("YOUR")):
-        if init_spotify(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET):
-            logger.info("Spotify ulandi")
-        else:
-            logger.warning("Spotify ulanmadi")
-
-    speak("Salom! Jarvis v3 tayyor. Meni chaqiring.")
+    speak("Salom Bekzod aka siz pizdes bolasiz! Jarvis v3 tayyor. Meni chaqiring.")
 
     _last_wake = 0
     _COOLDOWN  = 2.5
@@ -1430,7 +1341,7 @@ def main_keyboard():
             if not cmd: continue
             if not process_command(cmd): break
         except KeyboardInterrupt:
-            speak("Xayr!"); break
+            speak("Xayr Poshel Naxuy !"); break
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -1450,11 +1361,10 @@ if __name__ == "__main__":
         try:
             main_loop()
         except KeyboardInterrupt:
-            speak("Xayr Pashol naxuy!")
+            speak("Xayr Poshel Naxuy!")
         finally:
             if anim_window:
                 try: anim_window.stop()
                 except Exception: pass
 
-        # Speech navbatini yopish
         _speech_queue.put(None)

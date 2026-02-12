@@ -190,3 +190,48 @@
 15:23:10 [INFO] USER: abdulaziz
 15:23:10 [INFO] CMD: abdulaziz | RESP: telegram contact
 15:23:10 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+18:14:37 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+18:16:43 [INFO] SPEAK: Xayr!
+18:17:02 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+18:17:15 [INFO] USER: youtube
+18:17:15 [INFO] CMD: youtube | RESP: youtube
+18:17:15 [INFO] SPEAK: YouTube ochilmoqda
+18:17:37 [INFO] USER: bunday teleka
+18:17:37 [INFO] SPEAK: Bir daqiqa...
+18:17:38 [ERROR] Claude xatosi: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CY4ErUC64wLYFupfycRVP'}
+18:17:38 [INFO] CMD: bunday teleka | RESP: AI xatosi: Error code: 401 - {'type': 'error', 'error': {'ty
+18:17:40 [INFO] SPEAK: AI xatosi: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CY4ErUC64wLYFupfycRVP'}
+18:18:59 [INFO] USER: abdulaziz
+18:18:59 [INFO] CMD: abdulaziz | RESP: telegram contact
+18:18:59 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+18:19:29 [INFO] USER: ob-havo maʼlumot
+18:19:30 [INFO] CMD: ob-havo maʼlumot | RESP: Tashkentda hozir 10 daraja, overcast clouds. Shamol 2 metr p
+18:19:30 [INFO] SPEAK: Tashkentda hozir 10 daraja, overcast clouds. Shamol 2 metr per sekund.
+18:21:21 [INFO] USER: qaysi
+18:21:21 [INFO] SPEAK: Bir daqiqa...
+18:21:21 [ERROR] Claude xatosi: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CY4F8vYJcRe8Z5tY6pBCP'}
+18:21:21 [INFO] CMD: qaysi | RESP: AI xatosi: Error code: 401 - {'type': 'error', 'error': {'ty
+18:21:23 [INFO] SPEAK: AI xatosi: Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CY4F8vYJcRe8Z5tY6pBCP'}
+18:31:32 [INFO] SPEAK: Salom Bekzod aka siz pizdes bolasiz! Jarvis v3 tayyor. Meni chaqiring.
+18:31:42 [INFO] SPEAK: Xayr Poshel Naxuy!
+18:31:59 [INFO] SPEAK: Salom Bekzod aka siz pizdes bolasiz! Jarvis v3 tayyor. Meni chaqiring.
+18:32:17 [INFO] USER: boshim ogʻ
+18:32:17 [INFO] SPEAK: Bir daqiqa...
+18:32:19 [INFO] AI Q: boshim ogʻ | A: Xayrli kun! Bosh og'rishi bormi? Paracetamol ichis
+18:32:19 [INFO] CMD: boshim ogʻ | RESP: Xayrli kun! Bosh og'rishi bormi? Paracetamol ichishni yoki s
+18:32:20 [INFO] SPEAK: Xayrli kun! Bosh og'rishi bormi? Paracetamol ichishni yoki sovutqichga yotishni maslahat beraman.
+18:33:18 [INFO] USER: yulduzni och
+18:33:18 [INFO] SPEAK: Bir daqiqa...
+18:33:20 [INFO] AI Q: yulduzni och | A: Yulduzni ochish uchun Windows'da qidiruv panelida 
+18:33:20 [INFO] CMD: yulduzni och | RESP: Yulduzni ochish uchun Windows'da qidiruv panelida "Yulduzlar
+18:33:21 [INFO] SPEAK: Yulduzni ochish uchun Windows'da qidiruv panelida "Yulduzlar" deb izlab topishingiz kerak yoki `Win + S` bosib arayonga yozing.
+18:33:39 [INFO] USER: biotuk
+18:33:39 [INFO] SPEAK: Bir daqiqa...
+18:33:40 [INFO] AI Q: biotuk | A: Tushunmadim, qaytadan ayting. "Biotuk" nima degan 
+18:33:40 [INFO] CMD: biotuk | RESP: Tushunmadim, qaytadan ayting. "Biotuk" nima degan so'z ekani
+18:33:42 [INFO] SPEAK: Tushunmadim, qaytadan ayting. "Biotuk" nima degan so'z ekanini aniq aytib bering.
+18:33:52 [INFO] SPEAK: Salom Bekzod aka siz pizdes bolasiz! Jarvis v3 tayyor. Meni chaqiring.
+18:35:46 [INFO] USER: youtubeni
+18:35:46 [INFO] CMD: youtubeni | RESP: youtube
+18:35:46 [INFO] SPEAK: YouTube ochilmoqda
+18:36:31 [INFO] SPEAK: Xayr Poshel Naxuy!
