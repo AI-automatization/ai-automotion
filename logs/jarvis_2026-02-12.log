@@ -1,0 +1,192 @@
+14:09:24 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:09:41 [INFO] USER: yetib borch
+14:09:41 [INFO] CMD: yetib borch | RESP: Claude API kaliti sozlanmagan
+14:09:41 [INFO] SPEAK: Bir daqiqa...
+14:09:43 [INFO] SPEAK: Claude API kaliti sozlanmagan
+14:11:24 [INFO] USER: hayot qimmat
+14:11:24 [INFO] CMD: hayot qimmat | RESP: Claude API kaliti sozlanmagan
+14:11:24 [INFO] SPEAK: Bir daqiqa...
+14:11:27 [INFO] SPEAK: Claude API kaliti sozlanmagan
+14:11:31 [INFO] SPEAK: Xayr!
+14:12:30 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:12:54 [INFO] USER: yutib och
+14:12:54 [INFO] CMD: yutib och | RESP: Claude API kaliti sozlanmagan
+14:12:54 [INFO] SPEAK: Bir daqiqa...
+14:13:06 [INFO] SPEAK: Claude API kaliti sozlanmagan
+14:13:28 [INFO] SPEAK: Xayr Pawol naxuy!
+14:14:05 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:14:15 [INFO] SPEAK: Xayr Pashol naxuy!
+14:17:29 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:18:21 [INFO] USER: abdulazini ochi
+14:18:21 [INFO] CMD: abdulazini ochi | RESP: Claude API kaliti sozlanmagan
+14:18:21 [INFO] SPEAK: Bir daqiqa...
+14:18:24 [INFO] SPEAK: Claude API kaliti sozlanmagan
+14:18:45 [INFO] SPEAK: Xayr Pashol naxuy!
+14:18:54 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:19:07 [INFO] USER: yigitni och
+14:19:07 [INFO] CMD: yigitni och | RESP: Claude API kaliti sozlanmagan
+14:19:07 [INFO] SPEAK: Bir daqiqa...
+14:19:10 [INFO] SPEAK: Claude API kaliti sozlanmagan
+14:19:38 [INFO] SPEAK: Xayr Pashol naxuy!
+14:24:13 [INFO] SPEAK: Jarvis v3 test rejimida tayyor
+14:24:23 [INFO] CMD: youtube dan navai ni qidir | RESP: youtube
+14:24:23 [INFO] SPEAK: YouTube da dan navai  qidir ochilmoqda
+14:24:36 [INFO] CMD: meni boshim og'rimoqda | RESP: Claude API kaliti sozlanmagan
+14:24:36 [INFO] SPEAK: Bir daqiqa...
+14:24:39 [INFO] SPEAK: Claude API kaliti sozlanmagan
+14:29:59 [INFO] CMD: ls -la | RESP: Claude API kaliti sozlanmagan
+14:29:59 [INFO] SPEAK: Bir daqiqa...
+14:30:00 [INFO] SPEAK: Claude API kaliti sozlanmagan
+14:30:00 [ERROR] TTS xatosi: cannot schedule new futures after interpreter shutdown
+14:30:00 [INFO] SPEAK: Xayr!
+14:30:00 [ERROR] TTS xatosi: cannot schedule new futures after interpreter shutdown
+14:33:58 [INFO] SPEAK: Jarvis v3 test rejimida tayyor
+14:34:21 [INFO] SPEAK: Bir daqiqa...
+14:34:25 [INFO] AI Q: ibrat tursunov lox deb aytib ber | A: Tushunmadim, qaytadan ayting. Men sizga ijobiy va 
+14:34:25 [INFO] CMD: ibrat tursunov lox deb aytib ber | RESP: Tushunmadim, qaytadan ayting. Men sizga ijobiy va foydali yo
+14:34:25 [INFO] SPEAK: Tushunmadim, qaytadan ayting. Men sizga ijobiy va foydali yordam berishim kerak.
+14:34:36 [INFO] SPEAK: Xayr!
+14:34:36 [ERROR] TTS xatosi: cannot schedule new futures after interpreter shutdown
+14:34:43 [WARNING] Spotify ulanmadi
+14:34:43 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:36:01 [INFO] USER: youtubeni och
+14:36:01 [INFO] CMD: youtubeni och | RESP: youtube
+14:36:01 [INFO] SPEAK: YouTube ochilmoqda
+14:37:53 [INFO] USER: mening ismim nima
+14:37:53 [INFO] SPEAK: Bir daqiqa...
+14:37:55 [INFO] AI Q: mening ismim nima | A: Xayrli kun! Sizning ismingiz nima ekanligini bilma
+14:37:55 [INFO] CMD: mening ismim nima | RESP: Xayrli kun! Sizning ismingiz nima ekanligini bilmayman, chun
+14:37:55 [INFO] SPEAK: Xayrli kun! Sizning ismingiz nima ekanligini bilmayman, chunki siz uni aytmaganingiz. Ismingizni ayting, shunda bilaman.
+14:38:21 [INFO] USER: mening ismim bekzod
+14:38:21 [INFO] CMD: mening ismim bekzod | RESP: telegram contact
+14:38:21 [INFO] SPEAK: Telegramda Bekzod chati ochilmoqda
+14:38:44 [INFO] USER: mening ismim bekzod
+14:38:44 [INFO] SPEAK: Bir daqiqa...
+14:38:46 [INFO] AI Q: mening ismim bekzod | A: Xayrli kun, Bekzod! Qanday yordam bera olaman?
+14:38:46 [INFO] CMD: mening ismim bekzod | RESP: Xayrli kun, Bekzod! Qanday yordam bera olaman?
+14:38:47 [INFO] SPEAK: Xayrli kun, Bekzod! Qanday yordam bera olaman?
+14:39:09 [INFO] USER: mening ismim nima
+14:39:09 [INFO] SPEAK: Bir daqiqa...
+14:39:20 [INFO] AI Q: mening ismim nima | A: Sizning ismingiz Bekzod. Yana nimaga yordam kerak?
+14:39:20 [INFO] CMD: mening ismim nima | RESP: Sizning ismingiz Bekzod. Yana nimaga yordam kerak?
+14:39:20 [INFO] SPEAK: Sizning ismingiz Bekzod. Yana nimaga yordam kerak?
+14:43:19 [INFO] USER: vs kodni to'liq ekranga chiqar
+14:43:19 [INFO] SPEAK: Xayr! Ko'rishguncha.
+14:43:46 [WARNING] Spotify ulanmadi
+14:43:46 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:44:29 [INFO] USER: screenshot
+14:44:29 [INFO] CMD: screenshot | RESP: screenshot
+14:44:29 [INFO] SPEAK: Screenshot Desktop ga saqlandi
+14:45:14 [INFO] USER: ovozni maksimal balandlashtir
+14:45:14 [INFO] CMD: ovozni maksimal balandlashtir | RESP: ovoz
+14:45:14 [INFO] SPEAK: Ovoz oshirildi
+14:45:28 [INFO] USER: ovozni
+14:45:28 [INFO] SPEAK: Bir daqiqa...
+14:45:34 [INFO] AI Q: ovozni | A: Ovozni yoqish uchun Windows sozlamalariga kiring —
+14:45:34 [INFO] CMD: ovozni | RESP: Ovozni yoqish uchun Windows sozlamalariga kiring — Sound soz
+14:45:34 [INFO] SPEAK: Ovozni yoqish uchun Windows sozlamalariga kiring — Sound sozlamalarini ochib, speaker niqobini chiqarish tugmasini bosing yoki klaviaturadagi ovoz tugmasini oshiring. 🔊
+14:45:55 [INFO] USER: ovozni o'chir
+14:45:55 [INFO] SPEAK: Kompyuter 30 soniyada o'chadi
+14:45:55 [INFO] CMD: ovozni o'chir | RESP: kompyuter buyruqi
+14:48:59 [WARNING] Spotify ulanmadi
+14:48:59 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:49:19 [INFO] USER: telegramni och
+14:49:20 [INFO] CMD: telegramni och | RESP: CPU: 12% | RAM: 34% (5.4/15.6 GB) | Disk C: 92% (bo'sh 39.8 
+14:49:20 [INFO] SPEAK: CPU: 12% | RAM: 34% (5.4/15.6 GB) | Disk C: 92% (bo'sh 39.8 GB) | Batareya: ⚡ 32%
+14:49:48 [INFO] USER: telegramni och telegra
+14:49:48 [INFO] CMD: telegramni och telegra | RESP: CPU: 4% | RAM: 33% (5.1/15.6 GB) | Disk C: 92% (bo'sh 39.8 G
+14:49:48 [INFO] SPEAK: CPU: 4% | RAM: 33% (5.1/15.6 GB) | Disk C: 92% (bo'sh 39.8 GB) | Batareya: ⚡ 32%
+14:50:07 [INFO] USER: abduraziga salom yo'llay
+14:50:07 [INFO] SPEAK: Bir daqiqa...
+14:50:09 [INFO] AI Q: abduraziga salom yo'llay | A: Xayrli kun! Men Jarvis — sizning yordamchingiz. Ab
+14:50:09 [INFO] CMD: abduraziga salom yo'llay | RESP: Xayrli kun! Men Jarvis — sizning yordamchingiz. Abdurazi uch
+14:50:10 [INFO] SPEAK: Xayrli kun! Men Jarvis — sizning yordamchingiz. Abdurazi uchun salom yetkazmoqchimisiz? Uning telefon raqami yoki manzili mavjudmi?
+14:50:36 [INFO] USER: tilagandan abdulaziz
+14:50:36 [INFO] CMD: tilagandan abdulaziz | RESP: telegram contact
+14:50:36 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+14:52:15 [INFO] USER: googledan cour.mas aytiy tochka.uz
+14:52:15 [INFO] CMD: googledan cour.mas aytiy tochka.uz | RESP: google
+14:52:15 [INFO] SPEAK: Google ochilmoqda
+14:53:09 [INFO] USER: privet
+14:53:09 [INFO] SPEAK: Bir daqiqa...
+14:53:10 [INFO] AI Q: privet | A: Xayrli kun! Qanday yordam bera olaman?
+14:53:10 [INFO] CMD: privet | RESP: Xayrli kun! Qanday yordam bera olaman?
+14:53:12 [INFO] SPEAK: Xayrli kun! Qanday yordam bera olaman?
+14:53:49 [INFO] USER: abdulaziz
+14:53:49 [INFO] CMD: abdulaziz | RESP: telegram contact
+14:53:49 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+14:54:46 [INFO] USER: abdulaziz jonka
+14:54:46 [INFO] CMD: abdulaziz jonka | RESP: telegram contact
+14:54:46 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+14:55:23 [WARNING] Spotify ulanmadi
+14:55:23 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:56:46 [INFO] SPEAK: Xayr Pashol naxuy!
+14:57:09 [WARNING] Spotify ulanmadi
+14:57:09 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:57:24 [INFO] USER: abdulazizovka
+14:57:24 [INFO] CMD: abdulazizovka | RESP: telegram contact
+14:57:24 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+14:57:43 [INFO] USER: abdulaziz jonim
+14:57:43 [INFO] CMD: abdulaziz jonim | RESP: telegram contact
+14:57:43 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+14:58:10 [INFO] USER: abdulaziz deyil
+14:58:10 [INFO] CMD: abdulaziz deyil | RESP: telegram contact
+14:58:10 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+14:58:21 [INFO] SPEAK: Xayr Pashol naxuy!
+14:58:49 [WARNING] Spotify ulanmadi
+14:58:49 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+14:59:04 [INFO] USER: abdurazizga
+14:59:04 [INFO] SPEAK: Bir daqiqa...
+14:59:05 [INFO] AI Q: abdurazizga | A: Xayrli kun! Qanday yordam bera olaman? 😊
+14:59:05 [INFO] CMD: abdurazizga | RESP: Xayrli kun! Qanday yordam bera olaman? 😊
+14:59:06 [INFO] SPEAK: Xayrli kun! Qanday yordam bera olaman? 😊
+14:59:19 [INFO] USER: abdulaziz gey
+14:59:19 [INFO] CMD: abdulaziz gey | RESP: telegram contact
+14:59:19 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda
+15:00:05 [INFO] SPEAK: Xayr Pashol naxuy!
+15:00:39 [WARNING] Spotify ulanmadi
+15:00:39 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+15:00:57 [INFO] USER: abdurazgi
+15:00:57 [INFO] SPEAK: Bir daqiqa...
+15:01:01 [INFO] AI Q: abdurazgi | A: Xayrli kun! Qanday yordam bera olaman? 😊
+15:01:01 [INFO] CMD: abdurazgi | RESP: Xayrli kun! Qanday yordam bera olaman? 😊
+15:01:01 [INFO] SPEAK: Xayrli kun! Qanday yordam bera olaman? 😊
+15:02:18 [INFO] USER: ona
+15:02:18 [INFO] CMD: ona | RESP: telegram contact
+15:02:18 [INFO] SPEAK: Telegramda Ona chati ochilmoqda
+15:02:24 [INFO] SPEAK: Xayr Pashol naxuy!
+15:03:05 [WARNING] Spotify ulanmadi
+15:03:05 [INFO] SPEAK: Salom! Jarvis v3 tayyor. Meni chaqiring.
+15:03:21 [INFO] USER: onang
+15:03:21 [INFO] CMD: onang | RESP: telegram contact
+15:03:21 [INFO] SPEAK: Telegramda Ona chati ochilmoqda
+15:04:06 [INFO] USER: jizzax
+15:04:06 [INFO] SPEAK: Bir daqiqa...
+15:04:08 [INFO] AI Q: jizzax | A: Xayrli kun! Jizzax haqida nima bilmoqchisiz? Uni k
+15:04:08 [INFO] CMD: jizzax | RESP: Xayrli kun! Jizzax haqida nima bilmoqchisiz? Uni ko'rish yok
+15:04:09 [INFO] SPEAK: Xayrli kun! Jizzax haqida nima bilmoqchisiz? Uni ko'rish yoki haqida ma'lumot olmoqchimisiz?
+15:04:28 [INFO] USER: yutubni och
+15:04:28 [INFO] CMD: yutubni och | RESP: youtube
+15:04:28 [INFO] SPEAK: YouTube ochilmoqda
+15:09:39 [INFO] USER: spotify
+15:09:39 [INFO] CMD: spotify | RESP: Spotify ulangmagan
+15:09:39 [INFO] SPEAK: Spotify ulangmagan
+15:10:17 [INFO] USER: google
+15:10:17 [INFO] SPEAK: Bir daqiqa...
+15:10:18 [INFO] AI Q: google | A: Google-ni ochishini xohlaysiz? Veb-brauzeringizda 
+15:10:18 [INFO] CMD: google | RESP: Google-ni ochishini xohlaysiz? Veb-brauzeringizda Google.com
+15:10:20 [INFO] SPEAK: Google-ni ochishini xohlaysiz? Veb-brauzeringizda Google.com saytiga o'tsam bo'ladi.
+15:11:27 [INFO] USER: yigitni och
+15:11:27 [INFO] SPEAK: Bir daqiqa...
+15:11:29 [INFO] AI Q: yigitni och | A: Tushunmadim, qaytadan ayting. "Yigitni och" degani
+15:11:29 [INFO] CMD: yigitni och | RESP: Tushunmadim, qaytadan ayting. "Yigitni och" degani nima? Bir
+15:11:30 [INFO] SPEAK: Tushunmadim, qaytadan ayting. "Yigitni och" degani nima? Biror dasturni ochishni xohlaysizmi yoki biror narsani qidirmoqchimisiz?
+15:13:16 [INFO] USER: valyuta kurslari
+15:13:16 [INFO] CMD: valyuta kurslari | RESP: Qaysi valyutani ko'rishni xohlaysiz?
+15:13:16 [INFO] SPEAK: Qaysi valyutani ko'rishni xohlaysiz?
+15:13:32 [INFO] USER: valyuta kurslari uzbek va dollar
+15:13:32 [INFO] CMD: valyuta kurslari uzbek va dollar | RESP: 1 USD = 12,286 UZS. 1 USD = 12,286 UZS
+15:13:32 [INFO] SPEAK: 1 USD = 12,286 UZS. 1 USD = 12,286 UZS
+15:23:10 [INFO] USER: abdulaziz
+15:23:10 [INFO] CMD: abdulaziz | RESP: telegram contact
+15:23:10 [INFO] SPEAK: Telegramda Abdulaziz Mirzayev chati ochilmoqda

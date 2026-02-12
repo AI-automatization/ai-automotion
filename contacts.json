@@ -1,0 +1,24 @@
+{
+  "_comment": "Kontaktlar ro'yxati. username yoki phone_id qo'shing.",
+  "_example": "Ismni kichik harfda yozing, username @ belgisisiz",
+  "Abdulaziz gey": {
+    "display": "Abdulaziz gey",
+    "username": "mr_abdulaziz_yormatov",
+    "type": "username"
+  },
+  "Abdulaziz": {
+    "display": "Abdulaziz Mirzayev",
+    "username": "mirzaevvv011",
+    "type": "username"
+  },
+  "ota": {
+    "display": "Ota",
+    "phone": "+998901234567",
+    "type": "phone"
+  },
+  "ona": {
+    "display": "Ona",
+    "phone": "+998990500511",
+    "type": "phone"
+  }
+}
