@@ -23,6 +23,11 @@ def get_recent(n: int = 50) -> list[tuple[str, str, str]]:
         return list(_history[-n:])
 
 
+def get_last() -> tuple | None:
+    with _lock:
+        return _history[-1] if _history else None
+
+
 def clear():
     with _lock:
         _history.clear()

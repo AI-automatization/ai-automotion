@@ -12,7 +12,7 @@ from modules.core import State, state_manager
 #  HUD ANIMATSIYA
 # ══════════════════════════════════════════════════════════
 class JarvisAnimation:
-    W, H   = 240, 310
+    W, H   = 260, 360
     BG     = "#050810"
     PANEL  = "#0a1628"
     BORDER = "#0d2444"
@@ -54,6 +54,12 @@ class JarvisAnimation:
         self._stats_tick = 0
         self._state_str  = "background"
 
+        # ── Bosqich 2: Overlay ─────────────────────────────
+        self._overlay        = None   # Toplevel
+        self._overlay_cv     = None   # Canvas
+        self._overlay_frame  = 0
+        self._overlay_active = False
+
         self._menu = tk.Menu(self.root, tearoff=0,
                              bg="#0a1628", fg="#00aaff",
                              activebackground="#00aaff",
@@ -62,6 +68,8 @@ class JarvisAnimation:
                                command=lambda: open_settings_window(self.root))
         self._menu.add_command(label="📋 Buyruqlar tarixi",
                                command=lambda: open_history_window(self.root))
+        self._menu.add_command(label="📊 Dashboard",
+                               command=lambda: open_dashboard_window(self.root))
         self._menu.add_separator()
         self._menu.add_command(label="❌ Jarvisni yopish", command=self._quit)
 
@@ -74,6 +82,11 @@ class JarvisAnimation:
 
     def _on_state_change(self, new_state: State):
         self._state_str = new_state.value
+        # Bosqich 2: overlay boshqaruv (tkinter thread orqali)
+        if new_state in (State.LISTENING, State.PROCESSING, State.SPEAKING):
+            self.root.after(0, self._show_overlay)
+        elif new_state in (State.IDLE, State.BACKGROUND):
+            self.root.after(700, self._hide_overlay)
 
     def _quit(self):
         self._running = False
@@ -259,6 +272,46 @@ class JarvisAnimation:
                 cv.create_text(pad+12, stats_y+32,
                                text=f"{'⚡' if plug else '🔋'} BAT  {bat}%",
                                font=("Courier", 7), fill=bc, anchor="w")
+                stats_y += 44
+            else:
+                stats_y += 30
+
+        # ── Bosqich 1: Oxirgi buyruq/javob ──────────────────
+        from modules.history import get_last
+        sep2_y = stats_y + 8
+        cv.create_line(pad+4, sep2_y, W-pad-4, sep2_y,
+                       fill=self._dim(c, 0.12), width=1)
+        last = get_last()
+        if last:
+            _ts_l, cmd_l, resp_l = last
+            cv.create_text(pad+8, sep2_y+12,
+                           text="► " + (cmd_l[:22] if cmd_l else "—"),
+                           font=("Courier", 7), fill=self._dim(c, 0.65), anchor="w")
+            cv.create_text(pad+8, sep2_y+24,
+                           text="◄ " + (resp_l[:22] if resp_l else "—"),
+                           font=("Courier", 7), fill=self._dim(c, 0.50), anchor="w")
+        else:
+            cv.create_text(W//2, sep2_y+16, text="— tarix yo'q —",
+                           font=("Courier", 6), fill=self._dim(c, 0.22))
+
+        # ── Bosqich 1: Mikrofon signal kuchi ─────────────────
+        if state == "listening":
+            mic_y  = sep2_y + 40
+            n_mic  = 14
+            bx1    = pad + 28
+            bx2    = W - pad - 8
+            bw_mic = bx2 - bx1
+            cv.create_text(pad+8, mic_y, text="MIC",
+                           font=("Courier", 6, "bold"),
+                           fill=self._dim(c, 0.5), anchor="w")
+            for mi in range(n_mic):
+                h_frac = 0.25 + 0.75 * abs(math.sin(t * 5 + mi * 0.38))
+                bar_x  = bx1 + int(mi * bw_mic / n_mic)
+                bar_wp = max(1, int(bw_mic / n_mic) - 2)
+                bh     = max(1, int(6 * h_frac))
+                mc     = "#00ffaa" if h_frac > 0.75 else c
+                cv.create_rectangle(bar_x, mic_y - bh, bar_x + bar_wp, mic_y + bh,
+                                    fill=self._dim(mc, 0.65), outline="")
 
         y_bot = H-pad-28
         cv.create_line(pad+4, y_bot, W-pad-4, y_bot,
@@ -281,6 +334,149 @@ class JarvisAnimation:
 
     def set_state(self, state_str: str):
         self._state_str = state_str
+
+    # ── Bosqich 2: To'liq ekran overlay ─────────────────────
+    def _show_overlay(self):
+        if self._overlay is not None:
+            return
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        self._overlay = tk.Toplevel(self.root)
+        self._overlay.overrideredirect(True)
+        self._overlay.attributes("-topmost", True)
+        self._overlay.attributes("-alpha", 0.91)
+        self._overlay.geometry(f"{sw}x{sh}+0+0")
+        self._overlay.configure(bg="#010712")
+        self._overlay_cv = Canvas(self._overlay, width=sw, height=sh,
+                                  bg="#010712", highlightthickness=0)
+        self._overlay_cv.pack(fill="both", expand=True)
+        self._overlay_cv.bind("<Button-1>",
+                              lambda e: self.root.after(0, self._hide_overlay))
+        self._overlay_frame  = 0
+        self._overlay_active = True
+        self._animate_overlay()
+
+    def _hide_overlay(self):
+        self._overlay_active = False
+        if self._overlay:
+            try:
+                self._overlay.destroy()
+            except tk.TclError:
+                pass
+            self._overlay    = None
+            self._overlay_cv = None
+
+    def _animate_overlay(self):
+        if not self._overlay_active or self._overlay_cv is None:
+            return
+        try:
+            cv = self._overlay_cv
+            sw = cv.winfo_width()
+            sh = cv.winfo_height()
+            if sw <= 1:
+                sw = self.root.winfo_screenwidth()
+                sh = self.root.winfo_screenheight()
+            cv.delete("all")
+
+            state = self._state_str
+            cfg   = self.STATE_CFG.get(state, self.STATE_CFG["idle"])
+            color, label = cfg["color"], cfg["label"]
+            t = self._overlay_frame / 30.0
+
+            cx, cy = sw // 2, sh // 2
+
+            # Arxa fon
+            cv.create_rectangle(0, 0, sw, sh, fill="#010712", outline="")
+
+            # Glow rings
+            for gs, ga in zip([240, 190, 145, 105, 72],
+                              [0.02, 0.04, 0.07, 0.12, 0.18]):
+                pf = (0.85 + 0.15*math.sin(t*1.5))
+                cv.create_oval(cx-gs*pf, cy-gs*pf, cx+gs*pf, cy+gs*pf,
+                               fill=self._dim(color, ga), outline="")
+
+            if state == "listening":
+                for i in range(6):
+                    phase = (t * 1.4 - i * 0.28) % 1.0
+                    r_s = 75 + phase * 230
+                    cv.create_oval(cx-r_s, cy-r_s, cx+r_s, cy+r_s,
+                                   fill="", outline=self._dim(color, (1-phase)*0.55),
+                                   width=max(1, int(3*(1-phase))))
+                mw, mh = 32, 48
+                cv.create_rectangle(cx-mw//2, cy-mh//2, cx+mw//2, cy+mh//2,
+                                    fill=color, outline=self._dim(color, 0.5), width=2)
+                cv.create_arc(cx-mw//2-10, cy-mh//4, cx+mw//2+10, cy+mh//2+20,
+                              start=0, extent=-180, outline=color, fill="",
+                              style="arc", width=4)
+                cv.create_line(cx, cy+mh//2+18, cx, cy+mh//2+36, fill=color, width=4)
+                cv.create_line(cx-20, cy+mh//2+36, cx+20, cy+mh//2+36, fill=color, width=4)
+
+            elif state == "processing":
+                for ring_i, (orb_r, spd, ph) in enumerate(
+                        [(165, 2.0, 0), (125, -3.2, 0.5), (92, 1.5, 1.0)]):
+                    ang = t * spd + ph
+                    rx, ry = orb_r, orb_r * 0.4
+                    cv.create_oval(cx-rx, cy-ry, cx+rx, cy+ry,
+                                   outline=self._dim(color, 0.12), fill="", width=1)
+                    dx = cx + rx * math.cos(ang)
+                    dy = cy + ry * math.sin(ang)
+                    dr = 14 if ring_i == 0 else (10 if ring_i == 1 else 8)
+                    cv.create_oval(dx-dr, dy-dr, dx+dr, dy+dr, fill=color, outline="")
+                    for tr in range(8):
+                        ta  = ang - tr * 0.15
+                        tdx = cx + rx * math.cos(ta)
+                        tdy = cy + ry * math.sin(ta)
+                        tdr = dr * (1 - tr/8)
+                        cv.create_oval(tdx-tdr, tdy-tdr, tdx+tdr, tdy+tdr,
+                                       fill=self._dim(color, 0.45*(1-tr/8)), outline="")
+                r_s2 = 42 + 10 * math.sin(t * 5)
+                cv.create_oval(cx-r_s2, cy-r_s2, cx+r_s2, cy+r_s2,
+                               fill=self._dim(color, 0.9), outline="")
+
+            elif state == "speaking":
+                n_bars = 17; bar_w = 22; gap = 10
+                total_w = n_bars * (bar_w + gap) - gap
+                sx = cx - total_w // 2
+                max_h = sh * 0.27; min_h = 18
+                for i in range(n_bars):
+                    h = min_h + (max_h - min_h) * abs(math.sin(t * 4.5 + i * 0.55))
+                    bx = sx + i * (bar_w + gap)
+                    cv.create_rectangle(bx-3, cy+int(h+4)//2, bx+bar_w+3, cy-int(h+4)//2,
+                                        fill=self._dim(color, 0.15), outline="")
+                    cv.create_rectangle(bx, cy+h//2, bx+bar_w, cy-h//2,
+                                        fill=color, outline="")
+                    cv.create_rectangle(bx, cy-int(h)//2, bx+bar_w, cy-int(h)//2+3,
+                                        fill="white", outline="")
+
+            # Holat matni
+            cv.create_text(cx, cy + int(sh*0.28), text=label,
+                           font=("Courier", 22, "bold"),
+                           fill=self._dim(color, 0.85))
+
+            # Oxirgi javob/buyruq
+            from modules.history import get_last
+            last = get_last()
+            if last:
+                _ts_h, cmd_h, resp_h = last
+                if state == "speaking":
+                    cv.create_text(cx, cy + int(sh*0.37), text=resp_h[:90],
+                                   font=("Courier", 14), fill=self._dim(color, 0.6),
+                                   width=int(sw * 0.65))
+                elif state == "listening":
+                    cv.create_text(cx, cy + int(sh*0.37),
+                                   text=f"◄ {resp_h[:70]}",
+                                   font=("Courier", 12), fill=self._dim(color, 0.45),
+                                   width=int(sw * 0.65))
+
+            cv.create_text(cx, sh - 45, text="[ bosib yopish ]",
+                           font=("Courier", 11), fill=self._dim(color, 0.22))
+
+            self._overlay_frame += 1
+            self._overlay.after(33, self._animate_overlay)
+        except tk.TclError:
+            self._overlay_active = False
+            self._overlay    = None
+            self._overlay_cv = None
 
     def stop(self):
         self._running = False
@@ -422,3 +618,255 @@ def open_history_window(parent=None):
     text.config(state="disabled")
 
     if not parent: win.mainloop()
+
+
+# ══════════════════════════════════════════════════════════
+#  DASHBOARD OYNASI  (Bosqich 3)
+# ══════════════════════════════════════════════════════════
+def open_dashboard_window(parent=None):
+    """
+    PyWebView bor bo'lsa glassmorphism dashboard,
+    yo'q bo'lsa tkinter fallback ishlatiladi.
+    """
+    try:
+        import webview as _wv
+        _open_dashboard_webview()
+    except ImportError:
+        _open_dashboard_tkinter(parent)
+
+
+# ── PyWebView versiyasi ───────────────────────────────────
+class _JarvisAPI:
+    """JS → Python ko'prik"""
+
+    def get_stats(self):
+        try:
+            from modules.file_manager import get_system_stats
+            import platform, psutil
+            s = get_system_stats()
+            procs = sorted(
+                psutil.process_iter(["name", "cpu_percent", "memory_percent"]),
+                key=lambda x: x.info.get("memory_percent") or 0, reverse=True
+            )[:8]
+            s["os_name"]  = f"{platform.system()} {platform.release()}"
+            s["hostname"] = platform.node()
+            s["processes"] = [
+                {"name": (p.info.get("name") or "?"),
+                 "cpu":  round(p.info.get("cpu_percent") or 0, 1),
+                 "mem":  round(p.info.get("memory_percent") or 0, 1)}
+                for p in procs
+            ]
+            return s
+        except Exception as e:
+            return {"error": str(e)}
+
+    def get_history(self):
+        from modules.history import get_recent
+        return [{"ts": ts, "cmd": cmd, "resp": resp}
+                for ts, cmd, resp in get_recent(80)]
+
+    def get_reminders(self):
+        from modules.reminders import list_reminders, format_time_left
+        return [{"time_left": format_time_left(s), "msg": msg}
+                for _, s, msg in list_reminders()]
+
+    def get_tasks(self):
+        from modules.memory_manager import get_tasks
+        tasks = get_tasks(only_pending=False)
+        # JSON serializable formatga o'tkazish
+        result = []
+        for t in tasks:
+            if isinstance(t, dict):
+                result.append(t)
+            else:
+                result.append({"id": getattr(t,'id',0),
+                                "text": str(t),
+                                "status": "pending"})
+        return result
+
+    def add_task(self, text):
+        from modules.memory_manager import add_task as _add
+        _add(str(text))
+        return True
+
+    def complete_task(self, task_id):
+        from modules.memory_manager import complete_task as _done
+        return bool(_done(int(task_id)))
+
+    def get_state(self):
+        from modules.core import state_manager
+        return state_manager.get().value
+
+    def close_window(self):
+        import webview as _wv
+        wins = _wv.windows
+        if wins:
+            wins[0].destroy()
+
+
+def _open_dashboard_webview():
+    import webview as _wv
+    import threading
+
+    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             "dashboard.html")
+    url = f"file:///{html_path.replace(os.sep, '/')}"
+
+    def _run():
+        api    = _JarvisAPI()
+        window = _wv.create_window(
+            "JARVIS — Dashboard",
+            url=url,
+            js_api=api,
+            width=1140, height=680,
+            resizable=True,
+            frameless=False,
+            background_color="#020d1a",
+            min_size=(800, 500),
+        )
+        _wv.start(gui="edgechromium")
+
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+
+
+# ── Tkinter fallback versiyasi ────────────────────────────
+def _open_dashboard_tkinter(parent=None):
+    import datetime as _dt
+    from modules.history        import get_recent
+    from modules.reminders      import list_reminders, format_time_left
+    from modules.memory_manager import get_tasks, format_tasks_text, add_task
+
+    win = tk.Toplevel(parent) if parent else tk.Tk()
+    win.title("JARVIS — Dashboard")
+    win.geometry("720x580")
+    win.configure(bg="#0a1628")
+    win.resizable(True, True)
+
+    style = ttk.Style(win)
+    style.theme_use("clam")
+    style.configure("TNotebook",     background="#0a1628", borderwidth=0)
+    style.configure("TNotebook.Tab", background="#0d2444", foreground="#00aaff",
+                                     padding=[12, 5])
+    style.configure("TFrame",        background="#0a1628")
+    style.configure("TLabel",        background="#0a1628", foreground="#aabbcc",
+                                     font=("Courier", 9))
+    style.configure("TEntry",        fieldbackground="#07111f", foreground="#ffffff",
+                                     insertcolor="#00aaff")
+    style.configure("TButton",       background="#0d2444", foreground="#00aaff",
+                                     font=("Courier", 9))
+
+    nb = ttk.Notebook(win)
+    nb.pack(fill="both", expand=True, padx=8, pady=8)
+
+    # Stats tab
+    tab_s = ttk.Frame(nb); nb.add(tab_s, text="📊 Stats")
+    st = tk.Text(tab_s, bg="#07111f", fg="#00ccff", font=("Courier",9), wrap="word")
+    sc = ttk.Scrollbar(tab_s, command=st.yview); sc.pack(side="right", fill="y")
+    st.config(yscrollcommand=sc.set); st.pack(fill="both", expand=True, padx=8, pady=8)
+    st.tag_config("h", foreground="#00aaff",  font=("Courier",9,"bold"))
+    st.tag_config("g", foreground="#00ff88")
+    st.tag_config("w", foreground="#ffaa00")
+    st.tag_config("r", foreground="#ff4444")
+    st.tag_config("d", foreground="#445566")
+
+    def _bbar(v, n=18, wn=60, cr=80):
+        f = int(n*min(100,v)/100)
+        b = "█"*f + "░"*(n-f)
+        tg = "r" if v>=cr else "w" if v>=wn else "g"
+        return b, tg
+
+    def rs():
+        try:
+            from modules.file_manager import get_system_stats
+            import platform, psutil
+            s = get_system_stats(); st.config(state="normal"); st.delete("1.0","end")
+            st.insert("end",f"══ {_dt.datetime.now().strftime('%H:%M:%S')} ══\n\n","h")
+            for lbl,(val,wn,cr) in [("CPU",(s.get("cpu",0),60,80)),
+                                     ("RAM",(s.get("ram",0),65,85)),
+                                     ("DSK",(s.get("disk",0),70,90))]:
+                b,tg = _bbar(val,wn=wn,cr=cr)
+                st.insert("end",f"{lbl} [","d"); st.insert("end",b,tg)
+                st.insert("end",f"] {val}%\n","d")
+            bat = s.get("battery")
+            if bat:
+                b,tg = _bbar(bat,wn=30,cr=15)
+                st.insert("end","BAT [","d"); st.insert("end",b,tg)
+                st.insert("end",f"] {bat}% {'⚡' if s.get('plugged') else '🔋'}\n","d")
+            st.insert("end",f"\n{platform.system()} {platform.release()} | {platform.node()}\n","d")
+            st.insert("end","── TOP ──\n","h")
+            for p in sorted(psutil.process_iter(["name","cpu_percent","memory_percent"]),
+                            key=lambda x:x.info.get("memory_percent")or 0,reverse=True)[:6]:
+                n2=(p.info.get("name")or"?")[:20]; m=round(p.info.get("memory_percent")or 0,1)
+                st.insert("end",f"  {n2:<20} RAM:{m}%\n",
+                          "r" if m>10 else "w" if m>5 else "d")
+            st.config(state="disabled")
+        except Exception as e:
+            st.config(state="normal"); st.insert("end",f"Xato: {e}\n"); st.config(state="disabled")
+
+    rs()
+    sf2 = tk.Frame(tab_s, bg="#0a1628"); sf2.pack(fill="x", padx=8, pady=4)
+    ttk.Button(sf2, text="🔄", command=rs).pack(side="left")
+    def _asr():
+        if win.winfo_exists(): rs(); win.after(4000,_asr)
+    win.after(4000,_asr)
+
+    # History tab
+    tab_h = ttk.Frame(nb); nb.add(tab_h, text="📜 Tarix")
+    ht = tk.Text(tab_h, bg="#07111f", fg="#aabbcc", font=("Courier",9), wrap="word")
+    hs = ttk.Scrollbar(tab_h, command=ht.yview); hs.pack(side="right", fill="y")
+    ht.config(yscrollcommand=hs.set); ht.pack(fill="both", expand=True, padx=8, pady=8)
+    ht.tag_config("t",foreground="#334455"); ht.tag_config("c",foreground="#00aaff")
+    ht.tag_config("r2",foreground="#778899")
+    def lh():
+        ht.config(state="normal"); ht.delete("1.0","end")
+        rows=get_recent(80)
+        if rows:
+            for ts,cmd,resp in reversed(rows):
+                ht.insert("end",f"[{ts}] ","t"); ht.insert("end",f"► {cmd}\n","c")
+                ht.insert("end",f"      ◄ {resp[:80]}\n\n","r2")
+        else: ht.insert("end","Tarix yo'q\n")
+        ht.config(state="disabled")
+    lh()
+    hf2 = tk.Frame(tab_h, bg="#0a1628"); hf2.pack(fill="x", padx=8, pady=4)
+    ttk.Button(hf2, text="🔄", command=lh).pack(side="left")
+    def _ahr():
+        if win.winfo_exists(): lh(); win.after(3000,_ahr)
+    win.after(3000,_ahr)
+
+    # Reminders tab
+    tab_r = ttk.Frame(nb); nb.add(tab_r, text="⏰ Eslatmalar")
+    rt = tk.Text(tab_r, bg="#07111f", fg="#aabbcc", font=("Courier",10), wrap="word")
+    rs2 = ttk.Scrollbar(tab_r, command=rt.yview); rs2.pack(side="right", fill="y")
+    rt.config(yscrollcommand=rs2.set); rt.pack(fill="both", expand=True, padx=8, pady=8)
+    def lr():
+        rt.config(state="normal"); rt.delete("1.0","end")
+        rows=list_reminders()
+        if rows:
+            for i,(rid,secs,msg) in enumerate(rows,1):
+                rt.insert("end",f"  {i}. ⏰ {format_time_left(secs)}\n     📝 {msg}\n\n")
+        else: rt.insert("end","Eslatmalar yo'q\n")
+        rt.config(state="disabled")
+    lr()
+    ttk.Button(tab_r, text="🔄", command=lr).pack(pady=4)
+
+    # Tasks tab
+    tab_t = ttk.Frame(nb); nb.add(tab_t, text="📌 Vazifalar")
+    tt = tk.Text(tab_t, bg="#07111f", fg="#aabbcc", font=("Courier",10), wrap="word")
+    ts2 = ttk.Scrollbar(tab_t, command=tt.yview); ts2.pack(side="right", fill="y")
+    tt.config(yscrollcommand=ts2.set); tt.pack(fill="both", expand=True, padx=8, pady=8)
+    def lt():
+        tt.config(state="normal"); tt.delete("1.0","end")
+        tt.insert("end", format_tasks_text(get_tasks(only_pending=False)))
+        tt.config(state="disabled")
+    lt()
+    tf2 = tk.Frame(tab_t, bg="#0a1628"); tf2.pack(fill="x", padx=8, pady=4)
+    ti = ttk.Entry(tf2, width=38); ti.pack(side="left", padx=4)
+    def at():
+        txt=ti.get().strip()
+        if txt: add_task(txt); ti.delete(0,"end"); lt()
+    ttk.Button(tf2, text="➕ Qo'sh", command=at).pack(side="left", padx=2)
+    ttk.Button(tf2, text="🔄",        command=lt).pack(side="left", padx=2)
+
+    if not parent:
+        win.mainloop()

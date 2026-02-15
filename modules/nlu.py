@@ -34,10 +34,26 @@ _CYR = {
 
 def normalize_text(text: str) -> str:
     """Kiril → Lotin, kichik harf, tozalash — Bug #8"""
+    # Unicode apostroflarni normallashtirish
+    text = text.replace('\u2019', "'").replace('\u2018', "'").replace('\u02bc', "'")
     result = []
     for ch in text.lower():
         result.append(_CYR.get(ch, ch))
-    return re.sub(r'\s+', ' ', ''.join(result)).strip()
+    text = re.sub(r'\s+', ' ', ''.join(result)).strip()
+    # STT xatoliklarini tuzatish
+    STT_FIXES = {
+        "tayyor qo'y": "taymer qo'y",
+        "tayyor qoy":  "taymer qo'y",
+        "tayyor koy":  "taymer qo'y",
+        "tayyor ko'y": "taymer qo'y",
+    }
+    for wrong, correct in STT_FIXES.items():
+        if wrong in text and any(w in text for w in ["daqiqa","soat","sekund","minut"]):
+            text = text.replace(wrong, correct)
+    # 'tayyor' yolg'iz holda ham taymer
+    if "tayyor" in text and any(w in text for w in ["daqiqa","soat","sekund","minut"]):
+        text = text.replace("tayyor", "taymer")
+    return text
 
 
 def is_wake_word(text: str) -> bool:
@@ -118,7 +134,8 @@ _INTENTS: list[tuple[str, list[str]]] = [
 
     # Eslatmalar
     ("reminder_list", ["eslatmalarni ko'rsat", "eslatmalar ro'yxat"]),
-    ("reminder",      ["eslatib qo'y", "eslatma", "reminder", "daqiqadan keyin"]),
+    ("reminder",      ["eslatib qo'y", "eslatma", "reminder", "daqiqadan keyin",
+                       "taymer", "taymer qo'y", "daqiqaga", "soatga", "sekundga"]),
 
     # Vazifalar
     ("task_add",      ["vazifa qo'sh", "todo qo'sh"]),
@@ -140,6 +157,7 @@ _INTENTS: list[tuple[str, list[str]]] = [
     ("processes",     ["jarayonlar", "qaysi dasturlar", "processlar"]),
     ("settings",      ["sozlamalar", "settings", "konfiguratsiya"]),
     ("history",       ["tarixi", "history", "avvalgi buyruqlar"]),
+    ("dashboard",     ["dashboard", "panel", "statistika oyna"]),
 ]
 
 
@@ -179,3 +197,4 @@ def validate_ai_response(resp: dict) -> Tuple[bool, str]:
     if action and action not in KNOWN:
         return False, f"Noma'lum amal: {action}"
     return True, ""
+

@@ -12,7 +12,7 @@ import os
 # .env fayldan yuklash (agar dotenv o'rnatilgan bo'lsa)
 try:
     from dotenv import load_dotenv
-    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"), override=True)
 except ImportError:
     pass
 
